@@ -1,4 +1,9 @@
 package fpinScala.datastructures
+
+sealed trait List[+A]
+case object Nil extends List[Nothing]
+case class Cons[+A](head: A, tail: List[A]) extends List[A]
+
 /*
 import fpinScala.datastructures._
 import fpinScala.datastructures.List._
@@ -6,12 +11,7 @@ import fpinScala.datastructures.Nil._
 import fpinScala.datastructures.Cons._
 val x: List[Int] = List(1, 2, 7, 10, 4, 6)
 val xd: List[Double] = List(1.1, 2.2, 7.7, 10.1, 4.4, 6.6)
-
 */
-
-sealed trait List[+A]
-case object Nil extends List[Nothing]
-case class Cons[+A](head: A, tail: List[A]) extends List[A]
 
 object List {
 	def sum(ints: List[Int]): Int = ints match {
@@ -128,7 +128,25 @@ object List {
 	}
 
 	// ex 3.22
-	// def sumWith(al: List[Int], bl: List[Int]): List[Int] = {}
+	def sumWith(al: List[Int], bl: List[Int]): List[Int] = (al, bl) match {
+		case (Cons(a, as), Cons(b, bs)) => Cons(a+b, sumWith(as, bs))
+		case _ => Nil
+	}
+
+	// ex3.23
+	def zipWith[A](al: List[A], bl: List[A], f: (A, A) => A): List[A] = (al, bl) match {
+		case (Cons(a, ax), Cons(b, bx)) => Cons(f(a, b), zipWith(ax, bx, f))
+		case _ => Nil
+	}
+	// 型の拡張，カリー化が可能
+	//	def zipWith[A,B,C](al: List[A], bl: List[B])(f: (A, B) => C): List[C] = (al, bl) match {
+	//		case (Cons(a, ax), Cons(b, bx)) => Cons(f(a, b), zipWith(ax, bx)(f))
+	//		case _ => Nil
+	//	}
+
+	// ex3.24
+
+
 
 	def foldRight[A, B](as: List[A], z: B)(f: (A, B) => B): B = as match {
 		case Nil => z
